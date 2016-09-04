@@ -20,6 +20,4 @@ add_executable(server ${SOURCE_FILES} )
 target_link_libraries( server ${GLIB2_LIBRARIES} pthread )
 
 add_executable( client client_main.c )
-
-#set(SOURCE_FILES client_main.c storage.c storage.h)
-#add_executable( client ${SOURCE_FILES} )
+target_link_libraries( client pthread )
