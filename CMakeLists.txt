@@ -14,7 +14,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 include_directories( ${GLIB2_INCLUDE_DIRS} )
 link_directories( ${GLIB2_LIBRARY_DIRS} )
-add_definitions( ${GLIB2_CFLAGS_OTHER} )
+add_definitions( ${GLIB2_CFLAGS_OTHER} -D_POSIX_C_SOURCE=199309L )
 set(SOURCE_FILES server_main.c storage.c macros.h minini/minIni.c)
 add_executable(server ${SOURCE_FILES} )
 target_link_libraries( server ${GLIB2_LIBRARIES} pthread )
