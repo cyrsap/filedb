@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include "storage.h"
 #include "macros.h"
-#include <stdint.h>
 #include <pthread.h>
 #include <zconf.h>
 #include <signal.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <strings.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/time.h>
 
 // Флаг для выхода по SIGINT
 uint8_t Exit = 0;
@@ -81,6 +81,9 @@ void * WorkThreadBody( void * a )
     char SendBuffer[512];
     int msgsock;
     ssize_t RecvdBytes;
+    struct timespec ts, tsb;
+    ts.tv_sec = 0;
+    ts.tv_nsec = 1000;
 
     while ( !Exit ) {
         msgsock = accept( sock, 0, 0 );
@@ -98,7 +101,7 @@ void * WorkThreadBody( void * a )
             ParseInString( RecvBuffer, SendBuffer );
             write( msgsock, SendBuffer, strlen( SendBuffer ) );
         }
-        usleep(1);
+        nanosleep( &ts, &tsb );
     }
 }
 

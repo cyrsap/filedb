@@ -37,6 +37,7 @@
   #include <assert.h>
 #endif
 
+#include <strings.h>
 #if !defined __T || defined INI_ANSIONLY
   #include <ctype.h>
   #include <string.h>
