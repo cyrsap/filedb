@@ -20,7 +20,7 @@ const char SocketName[] = "SocketName";
 #define MAX_CONNECTIONS 5
 
 // Функция разбора строки, поступившей от клиента
-static int ParseInString( char * InString, char * OutString );
+static int ParseInString( char * aInString, char * aOutString );
 // Функция обработки сигнала SIGINT
 void SigIntHandler( int a );
 // Функция потока дедупликации
@@ -29,31 +29,34 @@ void * DeduplicateThreadBody( void * a );
 void * WorkThreadBody( void * a );
 
 // Функция разбора строки, поступившей от клиента
-static int ParseInString( char * InString, char * OutString )
+static int ParseInString( char * aInString, char * aOutString )
 {
+    ASSERT_PAR_R( aInString );
+    ASSERT_PAR_R( aOutString );
+
     char CommandStr[ 10 ];
     char Arg1[512];
     char Arg2[512];
 
-    sscanf( InString, "%s %s", CommandStr, Arg1 );
+    sscanf( aInString, "%s %s", CommandStr, Arg1 );
 
     if ( !strncasecmp( CommandStr, "list",  4 ) ) {
-        st_list( OutString, 512 );
+        ASSERT_FUNC_R( st_list( aOutString, 512 ) );
     }
     else if ( !strncasecmp( CommandStr, "put",   3 ) ) {
-        sscanf( InString, "%s %s %s", CommandStr, Arg1, Arg2 );
-        st_put( Arg1, Arg2 );
+        sscanf( aInString, "%s %s %s", CommandStr, Arg1, Arg2 );
+        ASSERT_FUNC_R( st_put( Arg1, Arg2 ) );
     }
     else if ( !strncasecmp( CommandStr, "get",   3 ) ) {
-        sscanf( InString, "%s %s", CommandStr, Arg1 );
-        st_get( Arg1, OutString, 512 );
+        sscanf( aInString, "%s %s", CommandStr, Arg1 );
+        ASSERT_FUNC_R( st_get( Arg1, aOutString, 512 ) );
     }
     else if ( !strncasecmp( CommandStr, "erase", 5 ) ) {
-        sscanf( InString, "%s %s", CommandStr, Arg1 );
-        st_erase( Arg1 );
+        sscanf( aInString, "%s %s", CommandStr, Arg1 );
+        ASSERT_FUNC_R( st_erase( Arg1 ) );
     }
     else {
-        strcat( OutString, "BadQuery\n" );
+        strcat( aOutString, "BadQuery\n" );
     }
     return ERR_OK;
 }
@@ -98,7 +101,7 @@ void * WorkThreadBody( void * a )
         }
         else if ( RecvdBytes > 0 ) {
             memset( SendBuffer, '\0', 512 );
-            ParseInString( RecvBuffer, SendBuffer );
+            ASSERT_FUNC( ParseInString( RecvBuffer, SendBuffer ) );
             write( msgsock, SendBuffer, strlen( SendBuffer ) );
         }
         nanosleep( &ts, &tsb );

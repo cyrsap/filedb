@@ -96,6 +96,9 @@ static void UnlockW()
 // Запись в файл одного элемента
 static void WriteToFile( gpointer aKey, gpointer aValue, gpointer aUd )
 {
+    ASSERT_PAR_R_VOID( aKey );
+    ASSERT_PAR_R_VOID( aValue );
+
     T_Container * Container = ( T_Container * )aValue;
     char * Key = ( char *) aKey;
     uint32_t KeyQuan = 0;
@@ -136,6 +139,8 @@ static int serialize_full()
 //--- Служебная функция дедупликации
 static void ModifyDouble( gpointer aKey, gpointer aValue, gpointer aUd)
 {
+    ASSERT_PAR_R_VOID( aKey );
+    ASSERT_PAR_R_VOID( aValue );
     GHashTableIter iter;
     gpointer Key, Value;
 
@@ -176,6 +181,8 @@ static void ModifyDouble( gpointer aKey, gpointer aValue, gpointer aUd)
 // Служебная функция добавления значения в строку
 static void AddToStr( gpointer aKey, gpointer aValue, gpointer aUd )
 {
+    ASSERT_PAR_R_VOID( aKey );
+    ASSERT_PAR_R_VOID( aUd );
     char * Key;
     Key = ( char * )aKey;
     char * OutStr = ( char * )aUd;
@@ -215,6 +222,8 @@ static void FreeContainer(gpointer aData)
 // Служебная функция создания контейнера
 static int CreateContainer( char * aStr, T_Container **aContainer )
 {
+    ASSERT_PAR_R( aStr );
+    ASSERT_PAR_R( aContainer );
     *aContainer = ( T_Container * )calloc( 1, sizeof( T_Container ) );
     (*aContainer)->Str = calloc( 1, strlen( aStr ) + 1 );
     strcpy( (*aContainer)->Str, aStr );
@@ -266,6 +275,8 @@ int st_init()
 //-------------------------------------------------------------------------
 int st_list(char *aOutString, size_t aStrLength)
 {
+    ASSERT_PAR_R( aOutString );
+    ASSERT_PAR_R( aStrLength );
     memset( aOutString, '\0', aStrLength );
     LockR();
     g_hash_table_foreach( Storage, AddToStr, (gpointer)aOutString );
@@ -280,6 +291,8 @@ int st_list(char *aOutString, size_t aStrLength)
 // Put record in the storage
 int st_put(char *aKey, char *aValue)
 {
+    ASSERT_PAR_R( aKey );
+    ASSERT_PAR_R( aValue );
     LockW();
 
     T_Container * Container;
@@ -297,6 +310,8 @@ int st_put(char *aKey, char *aValue)
 // Get record from the storage by key
 int st_get(const char *aKey, char *aValue, uint32_t aValueSize)
 {
+    ASSERT_PAR_R( aKey );
+    ASSERT_PAR_R( aValue );
     LockR();
     gpointer Value;
     if ( g_hash_table_lookup_extended( Storage, aKey, NULL, &Value ) ) {
@@ -314,6 +329,7 @@ int st_get(const char *aKey, char *aValue, uint32_t aValueSize)
 // Erase record from the storage by key
 int st_erase(const char *aKey)
 {
+    ASSERT_PAR_R( aKey );
     LockW();
     g_hash_table_remove( Storage, aKey );
     UnlockW();

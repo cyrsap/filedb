@@ -1,13 +1,8 @@
-//
-// Created by skr on 03.09.16.
-//
-
 #ifndef STORAGE_H
 #define STORAGE_H
 
 #include <stdlib.h>
 #include <stdint.h>
-
 
 // Функции работы с хранилищем данных
 
