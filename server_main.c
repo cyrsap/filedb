@@ -67,6 +67,12 @@ void SigIntHandler( int a )
     Exit = 1;
 }
 
+// Функция обработки сигнала SIGINT
+void SigPipeHandler( int a )
+{
+    return;
+}
+
 // Функция потока дедупликации
 void * DeduplicateThreadBody( void * a )
 {
@@ -102,7 +108,8 @@ void * WorkThreadBody( void * a )
         else if ( RecvdBytes > 0 ) {
             memset( SendBuffer, '\0', 512 );
             ASSERT_FUNC( ParseInString( RecvBuffer, SendBuffer ) );
-            write( msgsock, SendBuffer, strlen( SendBuffer ) );
+            send( msgsock, SendBuffer, strlen( SendBuffer ), MSG_NOSIGNAL );
+//            write( msgsock, SendBuffer, strlen( SendBuffer ) );
         }
         nanosleep( &ts, &tsb );
     }
@@ -113,6 +120,7 @@ int main(int argc, char *argv[] )
     // Инициализация таблицы, в которой хранятся данные
     st_init();
     signal( SIGINT, SigIntHandler );
+    signal( SIGPIPE, SigPipeHandler );
 
     // Создание серверного сокета
     struct sockaddr_un server;

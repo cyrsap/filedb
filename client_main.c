@@ -6,7 +6,7 @@
 #include <zconf.h>
 #include <string.h>
 #include <strings.h>
-
+#include <time.h>
 
 // Имя сокета, которому необходимо слать запросы
 const char SocketName[] = "SocketName";
@@ -23,6 +23,9 @@ int main(int argc, char *argv[] )
     struct sockaddr_un server;
     char SendBuffer[512];
     struct timeval tv;
+    struct timespec ts, tsb;
+    ts.tv_sec = 1;
+    ts.tv_nsec = 0;
 
     if ( argc < 2 ) {
         PrintCorrectFormat();
@@ -99,6 +102,7 @@ int main(int argc, char *argv[] )
         perror( "send error" );
     }
 
+    nanosleep( &ts, &tsb );
     memset( SendBuffer, '\0', 512 );
     read( sock, SendBuffer, 512 );
     if (strlen( SendBuffer )) {
